@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мои финансы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF5EE;
+    --paper:#FFFFFF;
+    --ink:#2E2430;
+    --ink-soft:#6E6270;
+    --plum:#5B3C66;
+    --plum-deep:#3E2646;
+    --sage:#7C9070;
+    --line:#E7DDD0;
+    --line-soft:#F0E9DF;
+    --danger:#B0554A;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Manrope',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--plum);color:#fff;}
+
+  .wrap{max-width:920px;margin:0 auto;padding:32px 20px 100px;}
+
+  header.top{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:28px;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:18px;
+  }
+  header.top h1{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(28px,5vw,42px);
+    margin:0;
+    line-height:1;
+    letter-spacing:-0.01em;
+  }
+  header.top .sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+  header.top .month-tag{
+    font-family:'Manrope',sans-serif;
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--plum);
+    background:var(--line-soft);
+    border:1px solid var(--line);
+    padding:6px 12px;
+    border-radius:100px;
+    white-space:nowrap;
+  }
+
+  nav.tabs{
+    display:flex;
+    gap:6px;
+    margin-bottom:24px;
+    border-bottom:1px solid var(--line);
+  }
+  nav.tabs button{
+    font-family:'Manrope',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    background:none;
+    border:none;
+    padding:10px 4px;
+    margin-right:22px;
+    cursor:pointer;
+    color:var(--ink-soft);
+    border-bottom:2px solid transparent;
+    transform:translateY(1px);
+  }
+  nav.tabs button.active{
+    color:var(--ink);
+    border-bottom:2px solid var(--plum);
+  }
+
+  section.view{display:none;}
+  section.view.active{display:block;}
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 22px;
+    margin-bottom:16px;
+  }
+  .card h2{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:18px;
+    margin:0 0 4px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .card .hint{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:0 0 14px;
+  }
+
+  .row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 0;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .row:last-of-type{border-bottom:none;}
+  .row .name{
+    flex:1;
+    font-size:14.5px;
+  }
+  .row input[type="text"].name-input{
+    flex:1;
+    border:none;
+    background:none;
+    font-family:'Manrope',sans-serif;
+    font-size:14.5px;
+    color:var(--ink);
+    padding:4px 0;
+  }
+  .row input[type="text"].name-input:focus{outline:none;border-bottom:1px solid var(--plum);}
+
+  .amount-field{
+    display:flex;
+    align-items:center;
+    background:var(--cream);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:6px 10px;
+    width:130px;
+  }
+  .amount-field input{
+    border:none;
+    background:none;
+    width:100%;
+    text-align:right;
+    font-family:'Manrope',sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+    color:var(--ink);
+  }
+  .amount-field input:focus{outline:none;}
+  .amount-field::after{
+    content:"₽";
+    color:var(--ink-soft);
+    font-size:13px;
+    margin-left:4px;
+  }
+
+  .row .del{
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:16px;
+    padding:2px 4px;
+    line-height:1;
+    opacity:.5;
+  }
+  .row .del:hover{opacity:1;color:var(--danger);}
+
+  .add-line{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-top:10px;
+    font-size:13px;
+    color:var(--plum);
+    background:none;
+    border:none;
+    cursor:pointer;
+    font-weight:700;
+    padding:4px 0;
+  }
+  .add-line:hover{text-decoration:underline;}
+
+  .total-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding-top:14px;
+    margin-top:6px;
+    border-top:1px solid var(--ink);
+  }
+  .total-row .label{font-weight:700;font-size:14px;}
+  .total-row .value{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:22px;
+  }
+
+  .summary-card{
+    background:var(--plum-deep);
+    color:#fff;
+    border:none;
+  }
+  .summary-card .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:16px;
+    margin-top:14px;
+  }
+  .summary-card .stat .k{
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:#D8C9DC;
+    margin-bottom:4px;
+  }
+  .summary-card .stat .v{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:24px;
+  }
+  .summary-card .stat.negative .v{color:#F0B4A8;}
+  .summary-card .stat.positive .v{color:#B9D8AE;}
+  .summary-card .final{
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid rgba(255,255,255,.18);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .summary-card .final .label{font-size:14px;color:#EDE3EF;}
+  .summary-card .final .value{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:30px;
+  }
+
+  /* Goals / knit progress */
+  .goal{margin-bottom:22px;}
+  .goal:last-child{margin-bottom:0;}
+  .goal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:8px;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .goal-head .gname{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:16px;
+  }
+  .goal-head .gnums{
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .goal-head .gnums b{color:var(--ink);font-weight:700;}
+
+  .stitch-track{
+    display:flex;
+    gap:3px;
+    height:22px;
+    align-items:center;
+  }
+  .stitch{
+    flex:1;
+    height:100%;
+    background:var(--line-soft);
+    border-radius:3px;
+    position:relative;
+    overflow:hidden;
+  }
+  .stitch.filled{background:var(--sage);}
+  .stitch.filled::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:repeating-linear-gradient(
+      -45deg,
+      rgba(255,255,255,.22) 0px,
+      rgba(255,255,255,.22) 2px,
+      transparent 2px,
+      transparent 6px
+    );
+  }
+
+  .goal-inputs{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+    flex-wrap:wrap;
+  }
+  .goal-inputs .field{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .goal-inputs label{
+    font-size:11px;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+  }
+  .goal-inputs .amount-field{width:150px;}
+
+  .goal-del{
+    background:none;border:none;color:var(--ink-soft);
+    font-size:12px;cursor:pointer;text-decoration:underline;
+    margin-top:4px;
+  }
+  .goal-del:hover{color:var(--danger);}
+
+  .add-goal{
+    margin-top:6px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .add-goal input{
+    font-family:'Manrope',sans-serif;
+    padding:9px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:var(--cream);
+    font-size:13.5px;
+  }
+  .add-goal input:focus{outline:1px solid var(--plum);}
+  .add-goal button{
+    font-family:'Manrope',sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    background:var(--plum);
+    color:#fff;
+    border:none;
+    padding:10px 16px;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .add-goal button:hover{background:var(--plum-deep);}
+
+  .footnote{
+    text-align:center;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:36px;
+  }
+
+  @media (max-width:520px){
+    .amount-field{width:105px;}
+    .goal-inputs .amount-field{width:120px;}
+    .summary-card .final .value{font-size:24px;}
+  }
+
+  :focus-visible{outline:2px solid var(--plum);outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){*{transition:none !important;}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Мои финансы</h1>
+      <div class="sub">Личный бюджет и накопления</div>
+    </div>
+    <div class="month-tag" id="monthTag">—</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="active" data-view="budget">Бюджет</button>
+    <button data-view="goals">Накопления</button>
+  </nav>
+
+  <!-- BUDGET VIEW -->
+  <section class="view active" id="view-budget">
+
+    <div class="card">
+      <h2>Доход</h2>
+      <p class="hint">Аванс, зарплата — всё, что приходит за месяц</p>
+      <div id="list-income"></div>
+      <button class="add-line" data-list="income">+ добавить статью</button>
+      <div class="total-row"><span class="label">Итого доход</span><span class="value" id="total-income">0 ₽</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Обязательные расходы</h2>
+      <p class="hint">Кредиты, подписки, то, что платится в любом случае</p>
+      <div id="list-oblig"></div>
+      <button class="add-line" data-list="oblig">+ добавить статью</button>
+      <div class="total-row"><span class="label">Итого обязательные</span><span class="value" id="total-oblig">0 ₽</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Переменные расходы</h2>
+      <p class="hint">Еда, транспорт, уход, всё повседневное</p>
+      <div id="list-var"></div>
+      <button class="add-line" data-list="var">+ добавить статью</button>
+      <div class="total-row"><span class="label">Итого переменные</span><span class="value" id="total-var">0 ₽</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Разовые / сезонные</h2>
+      <p class="hint">То, что нужно один раз в этом месяце</p>
+      <div id="list-once"></div>
+      <button class="add-line" data-list="once">+ добавить статью</button>
+      <div class="total-row"><span class="label">Итого разовые</span><span class="value" id="total-once">0 ₽</span></div>
+    </div>
+
+    <div class="card">
+      <h2>В накопления</h2>
+      <p class="hint">Сколько откладываешь в этом месяце по целям</p>
+      <div id="list-save"></div>
+      <div class="total-row"><span class="label">Итого в накопления</span><span class="value" id="total-save">0 ₽</span></div>
+    </div>
+
+    <div class="card summary-card">
+      <h2 style="color:#fff;">Итог месяца</h2>
+      <div class="grid">
+        <div class="stat"><div class="k">Доход</div><div class="v" id="s-income">0 ₽</div></div>
+        <div class="stat negative"><div class="k">Расходы всего</div><div class="v" id="s-expenses">0 ₽</div></div>
+        <div class="stat"><div class="k">В накопления</div><div class="v" id="s-savings">0 ₽</div></div>
+      </div>
+      <div class="final">
+        <span class="label">Свободно после всего</span>
+        <span class="value" id="s-final">0 ₽</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- GOALS VIEW -->
+  <section class="view" id="view-goals">
+    <div class="card">
+      <h2>Цели накоплений</h2>
+      <p class="hint">Прогресс считается по сумме всех взносов, которые ты вписываешь по месяцам на вкладке «Бюджет» — здесь просто отмечай итог накопленного вручную, либо веди помесячно ниже.</p>
+      <div id="goals-list"></div>
+      <div class="add-goal">
+        <input type="text" id="newGoalName" placeholder="Название цели, напр. Зубы">
+        <input type="text" id="newGoalTarget" placeholder="Цель, ₽" inputmode="numeric">
+        <button id="addGoalBtn">Добавить цель</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="footnote">Данные сохраняются прямо в этом браузере на этом устройстве.</div>
+</div>
+
+<script>
+/* ---------- state ---------- */
+const DEFAULT_STATE = {
+  income: [
+    {name:"Аванс (25 число)", amount:25000},
+    {name:"Зарплата 10 числа (карта)", amount:13000},
+    {name:"Зарплата 10 числа (наличные)", amount:37000},
+  ],
+  oblig: [
+    {name:"Кредиты", amount:18000},
+    {name:"Spotify", amount:220},
+    {name:"Тариф связи", amount:780},
+    {name:"Линзы (в среднем)", amount:800},
+  ],
+  var: [
+    {name:"Такси / транспорт", amount:6000},
+    {name:"Еда", amount:6500},
+    {name:"Секонд-хенд", amount:2000},
+    {name:"Здоровье", amount:1000},
+    {name:"Красота / уход", amount:800},
+    {name:"Маникюр", amount:2300},
+    {name:"Подарки", amount:1000},
+    {name:"Дом / быт", amount:1000},
+    {name:"Развлечения", amount:1500},
+    {name:"Учёба", amount:500},
+    {name:"Непредвиденное", amount:1500},
+  ],
+  once: [
+    {name:"Осенняя обувь", amount:4000},
+    {name:"Осенняя одежда", amount:4000},
+  ],
+  save: [
+    {name:"Подушка безопасности", amount:5000},
+    {name:"Зубы", amount:15000},
+    {name:"Свадьба", amount:8000},
+  ],
+  goals: [
+    {name:"Подушка безопасности", target:40000, saved:5000},
+    {name:"Зубы", target:100000, saved:0},
+    {name:"Свадьба", target:350000, saved:0},
+  ]
+};
+
+const STORAGE_KEY = "naz_finance_app_v1";
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_STATE));
+}
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+
+let state = loadState();
+
+/* ---------- month tag ---------- */
+const months = ["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"];
+document.getElementById("monthTag").textContent = months[new Date().getMonth()] + " " + new Date().getFullYear();
+
+/* ---------- tabs ---------- */
+document.querySelectorAll("nav.tabs button").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll("section.view").forEach(v=>v.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("view-"+btn.dataset.view).classList.add("active");
+  });
+});
+
+/* ---------- formatting ---------- */
+function fmt(n){
+  n = Math.round(n||0);
+  return n.toLocaleString("ru-RU") + " ₽";
+}
+
+/* ---------- render lists ---------- */
+const listConfig = [
+  {key:"income", el:"list-income", totalEl:"total-income"},
+  {key:"oblig", el:"list-oblig", totalEl:"total-oblig"},
+  {key:"var", el:"list-var", totalEl:"total-var"},
+  {key:"once", el:"list-once", totalEl:"total-once"},
+];
+
+function renderList(key, elId){
+  const container = document.getElementById(elId);
+  container.innerHTML = "";
+  state[key].forEach((item, idx)=>{
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `
+      <input type="text" class="name-input" value="${escapeHtml(item.name)}">
+      <div class="amount-field"><input type="text" inputmode="numeric" value="${item.amount}"></div>
+      <button class="del" title="удалить">✕</button>
+    `;
+    const nameInput = row.querySelector(".name-input");
+    const amountInput = row.querySelector(".amount-field input");
+    const delBtn = row.querySelector(".del");
+
+    nameInput.addEventListener("input", ()=>{
+      state[key][idx].name = nameInput.value;
+      saveState();
+    });
+    amountInput.addEventListener("input", ()=>{
+      const val = parseFloat(amountInput.value.replace(/[^\d.]/g,"")) || 0;
+      state[key][idx].amount = val;
+      saveState();
+      recalc();
+    });
+    delBtn.addEventListener("click", ()=>{
+      state[key].splice(idx,1);
+      saveState();
+      renderAll();
+    });
+    container.appendChild(row);
+  });
+}
+
+function renderSaveList(){
+  const container = document.getElementById("list-save");
+  container.innerHTML = "";
+  state.save.forEach((item, idx)=>{
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `
+      <span class="name">${escapeHtml(item.name)}</span>
+      <div class="amount-field"><input type="text" inputmode="numeric" value="${item.amount}"></div>
+    `;
+    const amountInput = row.querySelector(".amount-field input");
+    amountInput.addEventListener("input", ()=>{
+      const val = parseFloat(amountInput.value.replace(/[^\d.]/g,"")) || 0;
+      state.save[idx].amount = val;
+      saveState();
+      recalc();
+    });
+    container.appendChild(row);
+  });
+}
+
+function escapeHtml(str){
+  const d = document.createElement("div");
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function sumList(key){
+  return state[key].reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
+}
+
+function recalc(){
+  const totalIncome = sumList("income");
+  const totalOblig = sumList("oblig");
+  const totalVar = sumList("var");
+  const totalOnce = sumList("once");
+  const totalSave = sumList("save");
+  const totalExpenses = totalOblig + totalVar + totalOnce;
+  const finalFree = totalIncome - totalExpenses - totalSave;
+
+  document.getElementById("total-income").textContent = fmt(totalIncome);
+  document.getElementById("total-oblig").textContent = fmt(totalOblig);
+  document.getElementById("total-var").textContent = fmt(totalVar);
+  document.getElementById("total-once").textContent = fmt(totalOnce);
+  document.getElementById("total-save").textContent = fmt(totalSave);
+
+  document.getElementById("s-income").textContent = fmt(totalIncome);
+  document.getElementById("s-expenses").textContent = fmt(totalExpenses);
+  document.getElementById("s-savings").textContent = fmt(totalSave);
+  const finalEl = document.getElementById("s-final");
+  finalEl.textContent = fmt(finalFree);
+  finalEl.style.color = finalFree < 0 ? "#F0B4A8" : "#fff";
+}
+
+/* add-line buttons */
+document.querySelectorAll(".add-line").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const key = btn.dataset.list;
+    state[key].push({name:"Новая статья", amount:0});
+    saveState();
+    renderAll();
+  });
+});
+
+/* ---------- goals ---------- */
+function renderGoals(){
+  const container = document.getElementById("goals-list");
+  container.innerHTML = "";
+  state.goals.forEach((g, idx)=>{
+    const pct = g.target > 0 ? Math.min(100, Math.round((g.saved/g.target)*100)) : 0;
+    const totalStitches = 20;
+    const filled = Math.round((pct/100)*totalStitches);
+
+    const wrap = document.createElement("div");
+    wrap.className = "goal";
+    let stitches = "";
+    for(let i=0;i<totalStitches;i++){
+      stitches += `<div class="stitch ${i<filled?'filled':''}"></div>`;
+    }
+    wrap.innerHTML = `
+      <div class="goal-head">
+        <span class="gname">${escapeHtml(g.name)}</span>
+        <span class="gnums"><b>${fmt(g.saved)}</b> из ${fmt(g.target)} · ${pct}%</span>
+      </div>
+      <div class="stitch-track">${stitches}</div>
+      <div class="goal-inputs">
+        <div class="field">
+          <label>Накоплено</label>
+          <div class="amount-field"><input type="text" inputmode="numeric" value="${g.saved}" data-role="saved"></div>
+        </div>
+        <div class="field">
+          <label>Цель</label>
+          <div class="amount-field"><input type="text" inputmode="numeric" value="${g.target}" data-role="target"></div>
+        </div>
+      </div>
+      <button class="goal-del">удалить цель</button>
+    `;
+    const savedInput = wrap.querySelector('[data-role="saved"]');
+    const targetInput = wrap.querySelector('[data-role="target"]');
+    savedInput.addEventListener("input", ()=>{
+      state.goals[idx].saved = parseFloat(savedInput.value.replace(/[^\d.]/g,"")) || 0;
+      saveState();
+      renderGoals();
+    });
+    targetInput.addEventListener("input", ()=>{
+      state.goals[idx].target = parseFloat(targetInput.value.replace(/[^\d.]/g,"")) || 0;
+      saveState();
+      renderGoals();
+    });
+    wrap.querySelector(".goal-del").addEventListener("click", ()=>{
+      state.goals.splice(idx,1);
+      saveState();
+      renderGoals();
+    });
+    container.appendChild(wrap);
+  });
+}
+
+document.getElementById("addGoalBtn").addEventListener("click", ()=>{
+  const nameEl = document.getElementById("newGoalName");
+  const targetEl = document.getElementById("newGoalTarget");
+  const name = nameEl.value.trim();
+  const target = parseFloat(targetEl.value.replace(/[^\d.]/g,"")) || 0;
+  if(!name) return;
+  state.goals.push({name, target, saved:0});
+  nameEl.value = "";
+  targetEl.value = "";
+  saveState();
+  renderGoals();
+});
+
+/* ---------- render all ---------- */
+function renderAll(){
+  listConfig.forEach(c=>renderList(c.key, c.el));
+  renderSaveList();
+  renderGoals();
+  recalc();
+}
+renderAll();
+</script>
+
+</body>
+</html>
