@@ -370,6 +370,201 @@
 
   :focus-visible{outline:2px solid var(--plum);outline-offset:2px;}
   @media (prefers-reduced-motion: reduce){*{transition:none !important;}}
+
+  /* ---- Траты (expense log) ---- */
+  .entry-form{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .entry-form .full{grid-column:1/-1;}
+  .field-label{
+    font-size:11px;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    display:block;
+    margin-bottom:4px;
+  }
+  .entry-form input[type="text"],
+  .entry-form input[type="date"],
+  .entry-form select{
+    width:100%;
+    font-family:'Manrope',sans-serif;
+    font-size:14px;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:var(--cream);
+    color:var(--ink);
+  }
+  .entry-form input:focus,.entry-form select:focus{outline:1px solid var(--plum);}
+  .entry-submit{
+    grid-column:1/-1;
+    font-family:'Manrope',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    background:var(--plum);
+    color:#fff;
+    border:none;
+    padding:11px 16px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:4px;
+  }
+  .entry-submit:hover{background:var(--plum-deep);}
+
+  .month-picker{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .month-picker select{
+    font-family:'Manrope',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:8px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+
+  .entries-list .erow{
+    display:grid;
+    grid-template-columns:78px 1fr 90px 100px 26px;
+    gap:8px;
+    align-items:center;
+    padding:9px 0;
+    border-bottom:1px solid var(--line-soft);
+    font-size:13.5px;
+  }
+  .entries-list .erow:last-child{border-bottom:none;}
+  .erow .edate{color:var(--ink-soft);font-size:12px;}
+  .erow .ecat{font-weight:600;}
+  .erow .ecat .esub{display:block;font-weight:400;color:var(--ink-soft);font-size:11.5px;}
+  .erow .ecard{
+    font-size:11px;
+    color:var(--plum);
+    background:var(--line-soft);
+    border-radius:100px;
+    padding:3px 8px;
+    text-align:center;
+    white-space:nowrap;
+  }
+  .erow .eamount{font-weight:700;text-align:right;font-family:'Fraunces',serif;font-size:15px;}
+  .erow .edel{
+    background:none;border:none;color:var(--ink-soft);
+    cursor:pointer;font-size:15px;opacity:.5;justify-self:end;
+  }
+  .erow .edel:hover{opacity:1;color:var(--danger);}
+
+  .empty-note{
+    color:var(--ink-soft);
+    font-size:13.5px;
+    padding:14px 0;
+    text-align:center;
+  }
+
+  .breakdown-item{
+    margin-bottom:12px;
+  }
+  .breakdown-item:last-child{margin-bottom:0;}
+  .breakdown-head{
+    display:flex;
+    justify-content:space-between;
+    font-size:13.5px;
+    margin-bottom:5px;
+  }
+  .breakdown-head .bname{font-weight:600;}
+  .breakdown-head .bval{font-family:'Fraunces',serif;font-weight:600;}
+  .bbar-track{
+    height:8px;
+    background:var(--line-soft);
+    border-radius:100px;
+    overflow:hidden;
+  }
+  .bbar-fill{
+    height:100%;
+    background:var(--sage);
+    border-radius:100px;
+  }
+  .bbar-fill.card-fill{background:var(--plum);}
+
+  details.settings{
+    margin-top:6px;
+  }
+  details.settings summary{
+    cursor:pointer;
+    font-size:13px;
+    color:var(--plum);
+    font-weight:700;
+    padding:6px 0;
+  }
+  .tag-editor{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin:10px 0;
+  }
+  .tag-chip{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:var(--cream);
+    border:1px solid var(--line);
+    border-radius:100px;
+    padding:5px 6px 5px 12px;
+    font-size:12.5px;
+  }
+  .tag-chip button{
+    background:none;border:none;color:var(--ink-soft);
+    cursor:pointer;font-size:12px;line-height:1;
+    width:16px;height:16px;
+  }
+  .tag-chip button:hover{color:var(--danger);}
+  .tag-add{
+    display:flex;
+    gap:6px;
+  }
+  .tag-add input{
+    font-family:'Manrope',sans-serif;
+    font-size:13px;
+    padding:7px 10px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:var(--paper);
+  }
+  .tag-add button{
+    font-family:'Manrope',sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    background:var(--ink);
+    color:#fff;
+    border:none;
+    padding:7px 12px;
+    border-radius:8px;
+    cursor:pointer;
+  }
+
+  @media (max-width:520px){
+    .entry-form{grid-template-columns:1fr;}
+    .entries-list .erow{
+      grid-template-columns:1fr 26px;
+      grid-template-areas:
+        "cat del"
+        "meta meta"
+        "amount amount";
+      row-gap:4px;
+    }
+    .erow .ecat{grid-area:cat;}
+    .erow .edel{grid-area:del;}
+    .erow .edate{grid-area:meta;}
+    .erow .ecard{grid-area:meta;justify-self:start;margin-top:2px;}
+    .erow .eamount{grid-area:amount;text-align:left;}
+  }
 </style>
 </head>
 <body>
@@ -385,6 +580,7 @@
 
   <nav class="tabs">
     <button class="active" data-view="budget">Бюджет</button>
+    <button data-view="expenses">Траты</button>
     <button data-view="goals">Накопления</button>
   </nav>
 
@@ -441,6 +637,81 @@
         <span class="label">Свободно после всего</span>
         <span class="value" id="s-final">0 ₽</span>
       </div>
+    </div>
+  </section>
+
+  <!-- EXPENSES VIEW -->
+  <section class="view" id="view-expenses">
+
+    <div class="card">
+      <h2>Записать трату</h2>
+      <p class="hint">Заполняй вечером — сумма сама разложится по категориям и картам</p>
+      <div class="entry-form">
+        <div>
+          <span class="field-label">Дата</span>
+          <input type="date" id="eDate">
+        </div>
+        <div>
+          <span class="field-label">Сумма</span>
+          <input type="text" inputmode="numeric" id="eAmount" placeholder="0">
+        </div>
+        <div>
+          <span class="field-label">Категория</span>
+          <select id="eCategory"></select>
+        </div>
+        <div>
+          <span class="field-label">Карта / счёт</span>
+          <select id="eCard"></select>
+        </div>
+        <div class="full">
+          <span class="field-label">Комментарий (необязательно)</span>
+          <input type="text" id="eNote" placeholder="напр. такси до салона">
+        </div>
+        <button class="entry-submit" id="addExpenseBtn">Добавить трату</button>
+      </div>
+
+      <details class="settings">
+        <summary>Настроить категории и карты</summary>
+        <div>
+          <span class="field-label">Категории</span>
+          <div class="tag-editor" id="catEditor"></div>
+          <div class="tag-add">
+            <input type="text" id="newCatName" placeholder="Новая категория">
+            <button id="addCatBtn">Добавить</button>
+          </div>
+        </div>
+        <div style="margin-top:14px;">
+          <span class="field-label">Карты / счета</span>
+          <div class="tag-editor" id="cardEditor"></div>
+          <div class="tag-add">
+            <input type="text" id="newCardName" placeholder="напр. Карта Тинькофф">
+            <button id="addCardBtn">Добавить</button>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>История трат</h2>
+      <div class="month-picker">
+        <span class="field-label" style="margin:0;">Месяц</span>
+        <select id="monthFilter"></select>
+      </div>
+      <div class="entries-list" id="entriesList"></div>
+      <div class="total-row">
+        <span class="label">Итого за месяц</span>
+        <span class="value" id="expTotal">0 ₽</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>По категориям</h2>
+      <div id="catBreakdown"></div>
+    </div>
+
+    <div class="card">
+      <h2>По картам</h2>
+      <div id="cardBreakdown"></div>
     </div>
   </section>
 
@@ -501,7 +772,10 @@ const DEFAULT_STATE = {
     {name:"Подушка безопасности", target:40000, saved:5000},
     {name:"Зубы", target:100000, saved:0},
     {name:"Свадьба", target:350000, saved:0},
-  ]
+  ],
+  expenses: [],
+  categories: ["Еда","Такси/транспорт","Секонд-хенд","Красота/уход","Маникюр","Развлечения","Подарки","Дом/быт","Здоровье","Учёба","Кредит","Подписки","Другое"],
+  cards: ["Карта 1","Карта 2","Карта 3","Наличные"]
 };
 
 const STORAGE_KEY = "naz_finance_app_v1";
@@ -509,7 +783,14 @@ const STORAGE_KEY = "naz_finance_app_v1";
 function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw) return JSON.parse(raw);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      // merge in any new default keys missing from older saved data
+      Object.keys(DEFAULT_STATE).forEach(k=>{
+        if(!(k in parsed)) parsed[k] = JSON.parse(JSON.stringify(DEFAULT_STATE[k]));
+      });
+      return parsed;
+    }
   }catch(e){}
   return JSON.parse(JSON.stringify(DEFAULT_STATE));
 }
@@ -712,12 +993,201 @@ document.getElementById("addGoalBtn").addEventListener("click", ()=>{
   renderGoals();
 });
 
+/* ---------- expenses ---------- */
+function pad2(n){return String(n).padStart(2,"0");}
+function todayISO(){
+  const d = new Date();
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+}
+function monthKey(dateStr){ return dateStr.slice(0,7); } // YYYY-MM
+function monthLabel(key){
+  const [y,m] = key.split("-");
+  return months[parseInt(m,10)-1] + " " + y;
+}
+
+let currentMonthFilter = monthKey(todayISO());
+
+function populateSelect(el, items, selected){
+  el.innerHTML = "";
+  items.forEach(it=>{
+    const opt = document.createElement("option");
+    opt.value = it; opt.textContent = it;
+    if(it === selected) opt.selected = true;
+    el.appendChild(opt);
+  });
+}
+
+function renderTagEditor(containerId, key, minKeep){
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+  state[key].forEach((name, idx)=>{
+    const chip = document.createElement("div");
+    chip.className = "tag-chip";
+    chip.innerHTML = `<span>${escapeHtml(name)}</span>`;
+    if(state[key].length > minKeep){
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "✕";
+      delBtn.addEventListener("click", ()=>{
+        state[key].splice(idx,1);
+        saveState();
+        refreshExpenseControls();
+      });
+      chip.appendChild(delBtn);
+    }
+    container.appendChild(chip);
+  });
+}
+
+function refreshExpenseControls(){
+  renderTagEditor("catEditor","categories",1);
+  renderTagEditor("cardEditor","cards",1);
+  const catSel = document.getElementById("eCategory");
+  const cardSel = document.getElementById("eCard");
+  const prevCat = catSel.value, prevCard = cardSel.value;
+  populateSelect(catSel, state.categories, state.categories.includes(prevCat)?prevCat:state.categories[0]);
+  populateSelect(cardSel, state.cards, state.cards.includes(prevCard)?prevCard:state.cards[0]);
+  renderExpenses();
+}
+
+document.getElementById("addCatBtn").addEventListener("click", ()=>{
+  const input = document.getElementById("newCatName");
+  const v = input.value.trim();
+  if(!v) return;
+  if(!state.categories.includes(v)) state.categories.push(v);
+  input.value = "";
+  saveState();
+  refreshExpenseControls();
+});
+document.getElementById("addCardBtn").addEventListener("click", ()=>{
+  const input = document.getElementById("newCardName");
+  const v = input.value.trim();
+  if(!v) return;
+  if(!state.cards.includes(v)) state.cards.push(v);
+  input.value = "";
+  saveState();
+  refreshExpenseControls();
+});
+
+document.getElementById("eDate").value = todayISO();
+
+document.getElementById("addExpenseBtn").addEventListener("click", ()=>{
+  const dateEl = document.getElementById("eDate");
+  const amountEl = document.getElementById("eAmount");
+  const catEl = document.getElementById("eCategory");
+  const cardEl = document.getElementById("eCard");
+  const noteEl = document.getElementById("eNote");
+
+  const date = dateEl.value || todayISO();
+  const amount = parseFloat(amountEl.value.replace(/[^\d.]/g,"")) || 0;
+  if(amount <= 0){ amountEl.focus(); return; }
+
+  state.expenses.push({
+    id: Date.now() + Math.random().toString(16).slice(2),
+    date, amount,
+    category: catEl.value,
+    card: cardEl.value,
+    note: noteEl.value.trim()
+  });
+  amountEl.value = "";
+  noteEl.value = "";
+  saveState();
+
+  currentMonthFilter = monthKey(date);
+  renderExpenses();
+  amountEl.focus();
+});
+
+function getAvailableMonths(){
+  const set = new Set(state.expenses.map(e=>monthKey(e.date)));
+  set.add(monthKey(todayISO()));
+  return Array.from(set).sort().reverse();
+}
+
+function renderExpenses(){
+  const monthSel = document.getElementById("monthFilter");
+  const monthsAvail = getAvailableMonths();
+  const prevVal = monthSel.value || currentMonthFilter;
+  monthSel.innerHTML = "";
+  monthsAvail.forEach(mk=>{
+    const opt = document.createElement("option");
+    opt.value = mk; opt.textContent = monthLabel(mk);
+    if(mk === (monthsAvail.includes(prevVal)?prevVal:monthsAvail[0])) opt.selected = true;
+    monthSel.appendChild(opt);
+  });
+  currentMonthFilter = monthSel.value;
+
+  const filtered = state.expenses
+    .filter(e=>monthKey(e.date) === currentMonthFilter)
+    .sort((a,b)=> b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+
+  const listEl = document.getElementById("entriesList");
+  listEl.innerHTML = "";
+  if(filtered.length === 0){
+    listEl.innerHTML = `<div class="empty-note">Пока нет трат за этот месяц — впиши первую выше</div>`;
+  } else {
+    filtered.forEach(e=>{
+      const row = document.createElement("div");
+      row.className = "erow";
+      const d = new Date(e.date);
+      const dLabel = pad2(d.getDate())+"."+pad2(d.getMonth()+1);
+      row.innerHTML = `
+        <span class="edate">${dLabel}</span>
+        <span class="ecat">${escapeHtml(e.category)}${e.note?`<span class="esub">${escapeHtml(e.note)}</span>`:""}</span>
+        <span class="ecard">${escapeHtml(e.card)}</span>
+        <span class="eamount">${fmt(e.amount)}</span>
+        <button class="edel" title="удалить">✕</button>
+      `;
+      row.querySelector(".edel").addEventListener("click", ()=>{
+        state.expenses = state.expenses.filter(x=>x.id !== e.id);
+        saveState();
+        renderExpenses();
+      });
+      listEl.appendChild(row);
+    });
+  }
+
+  const total = filtered.reduce((s,e)=>s+e.amount,0);
+  document.getElementById("expTotal").textContent = fmt(total);
+
+  renderBreakdown("catBreakdown", filtered, "category");
+  renderBreakdown("cardBreakdown", filtered, "card", true);
+}
+
+function renderBreakdown(containerId, filtered, field, isCard){
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+  if(filtered.length === 0){
+    container.innerHTML = `<div class="empty-note">Нет данных за этот месяц</div>`;
+    return;
+  }
+  const totals = {};
+  filtered.forEach(e=>{ totals[e[field]] = (totals[e[field]]||0) + e.amount; });
+  const max = Math.max(...Object.values(totals));
+  const sorted = Object.entries(totals).sort((a,b)=>b[1]-a[1]);
+  sorted.forEach(([name,val])=>{
+    const item = document.createElement("div");
+    item.className = "breakdown-item";
+    const pct = max>0 ? Math.round((val/max)*100) : 0;
+    item.innerHTML = `
+      <div class="breakdown-head"><span class="bname">${escapeHtml(name)}</span><span class="bval">${fmt(val)}</span></div>
+      <div class="bbar-track"><div class="bbar-fill ${isCard?'card-fill':''}" style="width:${pct}%"></div></div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+document.getElementById("monthFilter").addEventListener("change", (e)=>{
+  currentMonthFilter = e.target.value;
+  renderExpenses();
+});
+
 /* ---------- render all ---------- */
 function renderAll(){
   listConfig.forEach(c=>renderList(c.key, c.el));
   renderSaveList();
   renderGoals();
   recalc();
+  refreshExpenseControls();
 }
 renderAll();
 </script>
