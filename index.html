@@ -180,6 +180,32 @@
   }
   .row .del:hover{opacity:1;color:var(--danger);}
 
+  .var-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 0;
+    border-bottom:1px solid var(--line-soft);
+    flex-wrap:wrap;
+  }
+  .var-row:last-of-type{border-bottom:none;}
+  .var-row .vname{
+    flex:1 1 130px;
+    font-size:14.5px;
+    font-weight:600;
+  }
+  .var-row .vfact{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    min-width:130px;
+  }
+  .var-row .vfact b{
+    font-weight:700;
+    color:var(--ink);
+  }
+  .var-row .vfact.over b{color:var(--danger);}
+  .var-row .vfact.under b{color:var(--sage);}
+
   .add-line{
     display:flex;
     align-items:center;
@@ -605,10 +631,14 @@
 
     <div class="card">
       <h2>Переменные расходы</h2>
-      <p class="hint">Еда, транспорт, уход, всё повседневное</p>
+      <p class="hint">План на месяц + факт, который сам подтягивается из вкладки «Траты» по категориям</p>
       <div id="list-var"></div>
-      <button class="add-line" data-list="var">+ добавить статью</button>
-      <div class="total-row"><span class="label">Итого переменные</span><span class="value" id="total-var">0 ₽</span></div>
+      <p class="hint" style="margin-top:10px;margin-bottom:0;">Список категорий — на вкладке «Траты» → «Настроить категории и карты»</p>
+      <div class="total-row"><span class="label">План переменных</span><span class="value" id="total-var">0 ₽</span></div>
+      <div class="total-row" style="border-top:none;padding-top:4px;margin-top:0;">
+        <span class="label" style="color:var(--ink-soft);font-weight:600;">Факт по тратам</span>
+        <span class="value" id="total-var-fact" style="font-size:16px;">0 ₽</span>
+      </div>
     </div>
 
     <div class="card">
@@ -759,6 +789,11 @@ const DEFAULT_STATE = {
     {name:"Учёба", amount:500},
     {name:"Непредвиденное", amount:1500},
   ],
+  varLimits: {
+    "Еда":6500, "Такси/транспорт":6000, "Секонд-хенд":2000, "Красота/уход":800,
+    "Маникюр":2300, "Развлечения":1500, "Подарки":1000, "Дом/быт":1000,
+    "Здоровье":1000, "Учёба":500, "Кредит":0, "Подписки":0, "Другое":1500
+  },
   once: [
     {name:"Осенняя обувь", amount:4000},
     {name:"Осенняя одежда", amount:4000},
@@ -789,6 +824,19 @@ function loadState(){
       Object.keys(DEFAULT_STATE).forEach(k=>{
         if(!(k in parsed)) parsed[k] = JSON.parse(JSON.stringify(DEFAULT_STATE[k]));
       });
+      // migrate old free-text "var" list into category-based varLimits once
+      if(!parsed._migratedVarLimits && Array.isArray(parsed.var) && parsed.var.length){
+        parsed.varLimits = parsed.varLimits || {};
+        parsed.var.forEach(item=>{
+          if(!(item.name in parsed.varLimits)){
+            parsed.varLimits[item.name] = item.amount;
+          }
+          if(!parsed.categories.includes(item.name)){
+            parsed.categories.push(item.name);
+          }
+        });
+        parsed._migratedVarLimits = true;
+      }
       return parsed;
     }
   }catch(e){}
@@ -824,7 +872,6 @@ function fmt(n){
 const listConfig = [
   {key:"income", el:"list-income", totalEl:"total-income"},
   {key:"oblig", el:"list-oblig", totalEl:"total-oblig"},
-  {key:"var", el:"list-var", totalEl:"total-var"},
   {key:"once", el:"list-once", totalEl:"total-once"},
 ];
 
@@ -893,10 +940,50 @@ function sumList(key){
   return state[key].reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
 }
 
+function renderVarList(){
+  const container = document.getElementById("list-var");
+  container.innerHTML = "";
+  const mk = monthKey(todayISO());
+  state.categories.forEach(cat=>{
+    if(!(cat in state.varLimits)) state.varLimits[cat] = 0;
+    const limit = state.varLimits[cat];
+    const fact = state.expenses
+      .filter(e=>monthKey(e.date)===mk && e.category===cat)
+      .reduce((s,e)=>s+e.amount,0);
+
+    const row = document.createElement("div");
+    row.className = "var-row";
+    const diff = limit - fact;
+    const factClass = limit>0 ? (fact>limit?"over":(fact<limit?"under":"")) : "";
+    row.innerHTML = `
+      <span class="vname">${escapeHtml(cat)}</span>
+      <span class="vfact ${factClass}">факт: <b>${fmt(fact)}</b></span>
+      <div class="amount-field"><input type="text" inputmode="numeric" value="${limit}"></div>
+    `;
+    const amountInput = row.querySelector(".amount-field input");
+    amountInput.addEventListener("input", ()=>{
+      const val = parseFloat(amountInput.value.replace(/[^\d.]/g,"")) || 0;
+      state.varLimits[cat] = val;
+      saveState();
+      recalc();
+    });
+    container.appendChild(row);
+  });
+}
+
+function sumVarLimits(){
+  return Object.values(state.varLimits).reduce((s,v)=>s+(parseFloat(v)||0),0);
+}
+function sumVarFact(){
+  const mk = monthKey(todayISO());
+  return state.expenses.filter(e=>monthKey(e.date)===mk).reduce((s,e)=>s+e.amount,0);
+}
+
 function recalc(){
   const totalIncome = sumList("income");
   const totalOblig = sumList("oblig");
-  const totalVar = sumList("var");
+  const totalVar = sumVarLimits();
+  const totalVarFact = sumVarFact();
   const totalOnce = sumList("once");
   const totalSave = sumList("save");
   const totalExpenses = totalOblig + totalVar + totalOnce;
@@ -905,6 +992,7 @@ function recalc(){
   document.getElementById("total-income").textContent = fmt(totalIncome);
   document.getElementById("total-oblig").textContent = fmt(totalOblig);
   document.getElementById("total-var").textContent = fmt(totalVar);
+  document.getElementById("total-var-fact").textContent = fmt(totalVarFact);
   document.getElementById("total-once").textContent = fmt(totalOnce);
   document.getElementById("total-save").textContent = fmt(totalSave);
 
@@ -1047,6 +1135,8 @@ function refreshExpenseControls(){
   populateSelect(catSel, state.categories, state.categories.includes(prevCat)?prevCat:state.categories[0]);
   populateSelect(cardSel, state.cards, state.cards.includes(prevCard)?prevCard:state.cards[0]);
   renderExpenses();
+  renderVarList();
+  recalc();
 }
 
 document.getElementById("addCatBtn").addEventListener("click", ()=>{
@@ -1094,6 +1184,8 @@ document.getElementById("addExpenseBtn").addEventListener("click", ()=>{
 
   currentMonthFilter = monthKey(date);
   renderExpenses();
+  renderVarList();
+  recalc();
   amountEl.focus();
 });
 
@@ -1141,6 +1233,8 @@ function renderExpenses(){
         state.expenses = state.expenses.filter(x=>x.id !== e.id);
         saveState();
         renderExpenses();
+        renderVarList();
+        recalc();
       });
       listEl.appendChild(row);
     });
